@@ -1,12 +1,15 @@
 {
   "name": "angular-authflow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "mv:src": "cp -R ./src/* ./dist/",
     "build:js": "uglifyjs ./src/authModule.js -o ./dist/angular-authflow.min.js -c",
-    "build": "npm run mv:src & npm run build:js"
+    "build": "npm run mv:src & npm run build:js",
+    "bundle": "browserify ./demo/app.js > ./demo/bundle.js",
+    "server": "live-server --port=3000 ./demo",
+    "start": "run-p watch server"
   },
   "repository": {
     "type": "git",
@@ -23,6 +26,11 @@
   },
   "homepage": "https://github.com/kafm/angular-authflow#readme",
   "devDependencies": {
+    "browserify": "^13.1.0",
+    "live-server": "^1.1.0",
     "uglifyjs": "^2.4.10"
+  },
+  "dependencies": {
+    "angular": "^1.5.8"
   }
 }

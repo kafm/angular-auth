@@ -14,6 +14,7 @@ var EventBus = require("./eventBus");
 	AuthConfig.$inject = ["$httpProvider"];
 	AuthService.$inject = ["$http", "$q", "AuthSession", "EventBus"];
 
+
 	var eventBus = new EventBus();
 	
 	var triggers = {
