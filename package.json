@@ -1,16 +1,16 @@
 {
-  "name": "angular-auth",
+  "name": "angular-authflow",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "mv:src": "cp ./src/datalayer.js ./dist/",
-    "build:js": "uglifyjs ./src/datalayer.js -o ./dist/datalayer.min.js -c",
+    "mv:src": "cp -R ./src/* ./dist/",
+    "build:js": "uglifyjs ./src/authModule.js -o ./dist/angular-authflow.min.js -c",
     "build": "npm run mv:src & npm run build:js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kafm/angular-auth.git"
+    "url": "git+https://github.com/kafm/angular-authflow.git"
   },
   "keywords": [
     "angularjs",
@@ -19,7 +19,10 @@
   "author": "Kevin Martins",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kafm/angular-auth/issues"
+    "url": "https://github.com/kafm/angular-authflow/issues"
   },
-  "homepage": "https://github.com/kafm/angular-auth#readme"
+  "homepage": "https://github.com/kafm/angular-authflow#readme",
+  "devDependencies": {
+    "uglifyjs": "^2.4.10"
+  }
 }

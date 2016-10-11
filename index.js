@@ -1,3 +1,3 @@
 require('src/authModule');
 
-module.exports = 'angular-auth';
+module.exports = 'angular-authflow';
