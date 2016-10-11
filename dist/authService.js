@@ -1,6 +1,6 @@
 module.exports = 'authService';
 
-var EventBus = require("eventBus");
+var EventBus = require("./eventBus");
 
 (function() {
 	
