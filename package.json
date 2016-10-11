@@ -1,0 +1,25 @@
+{
+  "name": "angular-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "mv:src": "cp ./src/datalayer.js ./dist/",
+    "build:js": "uglifyjs ./src/datalayer.js -o ./dist/datalayer.min.js -c",
+    "build": "npm run mv:src & npm run build:js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kafm/angular-auth.git"
+  },
+  "keywords": [
+    "angularjs",
+    "auth"
+  ],
+  "author": "Kevin Martins",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kafm/angular-auth/issues"
+  },
+  "homepage": "https://github.com/kafm/angular-auth#readme"
+}
