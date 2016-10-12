@@ -1,4 +1,4 @@
-function EventBus() 
+module.exports = function EventBus() 
 {
 	'use strict';
 	

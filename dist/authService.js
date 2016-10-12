@@ -12,7 +12,8 @@ var EventBus = require("./eventBus");
    	.factory("AuthService", AuthService);
 
 	AuthConfig.$inject = ["$httpProvider"];
-	AuthService.$inject = ["$http", "$q", "AuthSession", "EventBus"];
+	AuthService.$inject = ["$http", "$q", "AuthSession"];
+
 
 	var eventBus = new EventBus();
 	
