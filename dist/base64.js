@@ -1,4 +1,4 @@
-var base64 = (function()
+module.exports = (function()
 {
 	'use strict';
 	
