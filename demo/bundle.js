@@ -1,15 +1,33 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var ng = require('angular');
+require('angular');
 
 var authModule = require('../src/authModule');
 
-
 angular
-.module('angular-demo', [authModule])
-.controller('Test', ['authSession', function(authSession){
-	console.log(authSession);
-}]);
+.module('angular-demo', ["angular-authflow"])
+.run(Configuration);
 
+Configuration.$inject = ["AuthService"];
+
+function Configuration(AuthService) {
+	console.log("Entrei");
+	AuthService.config({
+		requestUrl: "http://127.0.0.1:8080/authenticate"
+		, resetPassRequestUrl: "http://127.0.0.1:8080/reset_password"
+		, changePassRequestUrl:"http://127.0.0.1:8080/change_password"
+		, roleAttr: "permissions"
+	});
+	
+	AuthService.authenticate({userName: "su", password: "Password"});
+	AuthService.on(AuthService.triggers.loginSuccess, function(data) {
+		 console.log("LOGGED in") 
+	});
+	console.log("HERE")	
+}
+
+angular.element(document).ready(function() {
+	  angular.bootstrap(document, ['angular-demo']);
+	});
 },{"../src/authModule":4,"angular":3}],2:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.8
@@ -31804,7 +31822,7 @@ var EventBus = require("./eventBus");
    	.factory("AuthService", AuthService);
 
 	AuthConfig.$inject = ["$httpProvider"];
-	AuthService.$inject = ["$http", "$q", "AuthSession", "EventBus"];
+	AuthService.$inject = ["$http", "$q", "AuthSession"];
 
 
 	var eventBus = new EventBus();
@@ -32001,10 +32019,12 @@ var EventBus = require("./eventBus");
 })();
 	
 
-},{"./eventBus":7}],6:[function(require,module,exports){
+},{"./eventBus":8}],6:[function(require,module,exports){
 module.exports = 'authSession';
 
 var EventBus = require("./eventBus");
+
+var base64 = require("./base64");
 
 (function() {
 	
@@ -32099,7 +32119,99 @@ var EventBus = require("./eventBus");
 
 
 
-},{"./eventBus":7}],7:[function(require,module,exports){
+},{"./base64":7,"./eventBus":8}],7:[function(require,module,exports){
+module.exports = (function()
+{
+	'use strict';
+	
+	var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	
+	return {
+		encode: encode
+		, decode: decode
+	};
+	
+	function encode(str)
+	{
+		if(window.btoa)
+			return  window.btoa(_utf8Encode(str));
+		return _encode(_utf8Encode(str));
+	}
+	
+	function decode(str)
+	{
+		if(window.atob)
+			return _utf8Decode(window.atob(str));
+		return _utf8Decode(_decode(str));
+	}
+	
+	function _encode(input)
+	{
+		var output = "";
+	    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+	    var i = 0;	    
+	    while (i < input.length) 
+	    {
+	        chr1 = input.charCodeAt(i++);
+	        chr2 = input.charCodeAt(i++);
+	        chr3 = input.charCodeAt(i++);
+
+	        enc1 = chr1 >> 2;
+	        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+	        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+	        enc4 = chr3 & 63;
+
+	        if (isNaN(chr2)) 
+	            enc3 = enc4 = 64;
+	         else if (isNaN(chr3)) 
+	            enc4 = 64;
+
+	        output = output +
+	        this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+	        this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+	    }
+	    return output;		
+	}
+	
+	function _decode(input)
+	{
+	    var output = "";
+	    var chr1, chr2, chr3;
+	    var enc1, enc2, enc3, enc4;
+	    var i = 0;
+	    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+	    while (i < input.length) 
+	    {
+	        enc1 = this._keyStr.indexOf(input.charAt(i++));
+	        enc2 = this._keyStr.indexOf(input.charAt(i++));
+	        enc3 = this._keyStr.indexOf(input.charAt(i++));
+	        enc4 = this._keyStr.indexOf(input.charAt(i++));
+
+	        chr1 = (enc1 << 2) | (enc2 >> 4);
+	        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+	        chr3 = ((enc3 & 3) << 6) | enc4;
+
+	        output = output + String.fromCharCode(chr1);
+
+	        if (enc3 != 64) 
+	            output = output + String.fromCharCode(chr2);
+	        if (enc4 != 64) 
+	            output = output + String.fromCharCode(chr3);
+	    }
+	    return output;		
+	}
+	
+	function _utf8Encode(str)
+	{
+		return escape(encodeURIComponent(str));
+	}
+	
+	function _utf8Decode(str)
+	{
+		return decodeURIComponent(unescape(str));
+	}
+})();
+},{}],8:[function(require,module,exports){
 module.exports = function EventBus() 
 {
 	'use strict';

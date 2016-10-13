@@ -2,6 +2,8 @@ module.exports = 'authSession';
 
 var EventBus = require("./eventBus");
 
+var base64 = require("./base64");
+
 (function() {
 	
 	'use strict';
