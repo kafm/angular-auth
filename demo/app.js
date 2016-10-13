@@ -9,19 +9,19 @@ angular
 Configuration.$inject = ["AuthService"];
 
 function Configuration(AuthService) {
-	console.log("Entrei");
 	AuthService.config({
 		requestUrl: "http://127.0.0.1:8080/authenticate"
 		, resetPassRequestUrl: "http://127.0.0.1:8080/reset_password"
 		, changePassRequestUrl:"http://127.0.0.1:8080/change_password"
+		, userInfoUrl: "http://127.0.0.1:8080/userInfo"
 		, roleAttr: "permissions"
+		, tokenAttr: "id_token"
 	});
 	
 	AuthService.authenticate({userName: "su", password: "Password"});
 	AuthService.on(AuthService.triggers.loginSuccess, function(data) {
-		 console.log("LOGGED in") 
+		 console.log(data) 
 	});
-	console.log("HERE")	
 }
 
 angular.element(document).ready(function() {

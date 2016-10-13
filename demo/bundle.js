@@ -10,19 +10,19 @@ angular
 Configuration.$inject = ["AuthService"];
 
 function Configuration(AuthService) {
-	console.log("Entrei");
 	AuthService.config({
 		requestUrl: "http://127.0.0.1:8080/authenticate"
 		, resetPassRequestUrl: "http://127.0.0.1:8080/reset_password"
 		, changePassRequestUrl:"http://127.0.0.1:8080/change_password"
+		, userInfoUrl: "http://127.0.0.1:8080/userInfo"
 		, roleAttr: "permissions"
+		, tokenAttr: "id_token"
 	});
 	
 	AuthService.authenticate({userName: "su", password: "Password"});
 	AuthService.on(AuthService.triggers.loginSuccess, function(data) {
-		 console.log("LOGGED in") 
+		 console.log(data) 
 	});
-	console.log("HERE")	
 }
 
 angular.element(document).ready(function() {
@@ -31849,6 +31849,8 @@ var EventBus = require("./eventBus");
 			, changePassRequestMethod: "POST"
 			, resetPassRequestUrl: undefined
 			, resetPassRequestMethod: "POST"
+			, userInfoUrl: undefined
+			, userInfoMethod: "GET"
 			, authInfoParser: undefined		
 			, unauthorizedStatuses: [401, 419, 440] 
 			, forbiddenStatuses: [403] 
@@ -31860,6 +31862,7 @@ var EventBus = require("./eventBus");
 			triggers: triggers
 			, config: config
 			, authenticate: authenticate
+			, setToken: setToken
 			, changePassword: changePassword
 			, resetPassword: resetPassword
 			, isAuthenticated: isAuthenticated
@@ -31903,6 +31906,10 @@ var EventBus = require("./eventBus");
 				    .error(resolveAuthFailure);
 			}
 			return this;
+		}
+
+		function setToken(token) {
+
 		}
 		
 		function changePassword(details) {
@@ -31966,9 +31973,29 @@ var EventBus = require("./eventBus");
 		}
 		
 		function resolveAuthSuccess(data) {
-			var session = _config.authInfoParser ? _config.authInfoParser(data) : data;
+			var session = data;
+			if(_config.userInfoUrl) {
+				var authHeader = {};
+				authHeader[_config.tokenHeader] = session[_config.tokenAttr];
+				$http({
+ 					method: _config.userInfoMethod,
+ 					url: _config.userInfoUrl,
+ 					headers: authHeader})
+			   	.success(function(data) {
+					resolveSession(angular.merge(session, data));
+				})
+			    .error(resolveResetPasswordFailure);
+			} else {
+				resolveSession(session);
+			}
+		}
+
+		function resolveSession(session) {
+			if(_config.authInfoParser) {
+				session = _config.authInfoParser(data);
+			}
 			AuthSession.create(session);
-			eventBus.trigger(triggers.loginSuccess, session);
+			eventBus.trigger(triggers.loginSuccess, session);			
 		}
 		
 		function resolveAuthFailure(err) {
