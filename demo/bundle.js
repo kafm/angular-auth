@@ -11,10 +11,10 @@ Configuration.$inject = ["AuthService"];
 
 function Configuration(AuthService) {
 	AuthService.config({
-		requestUrl: "http://127.0.0.1:8080/authenticate"
-		, resetPassRequestUrl: "http://127.0.0.1:8080/reset_password"
-		, changePassRequestUrl:"http://127.0.0.1:8080/change_password"
-		, userInfoUrl: "http://127.0.0.1:8080/userInfo"
+		requestUrl: "http://127.0.0.1:8000/api/v1/authenticate"
+		, resetPassRequestUrl: "http://127.0.0.1:8000/api/v1/reset_password"
+		, changePassRequestUrl:"http://127.0.0.1:8000/api/v1/change_password"
+		, userInfoUrl: "http://127.0.0.1:8000/api/v1/user-info"
 		, roleAttr: "permissions"
 		, tokenAttr: "id_token"
 	});
@@ -31897,13 +31897,13 @@ var EventBus = require("./eventBus");
 			if(method == "get") {
 				url = transformToGetRequest(url, credentials);
 				$http.get(url) 
-				   	.success(resolveAuthSuccess)
-				    .error(resolveAuthFailure);
+				   	.then(resolveAuthSuccess)
+				    .catch(resolveAuthFailure);
 			}
 			else {
 				$http[method](url, credentials) 
-				   	.success(resolveAuthSuccess)
-				    .error(resolveAuthFailure);
+				   	.then(resolveAuthSuccess)
+				    .catch(resolveAuthFailure);
 			}
 			return this;
 		}
@@ -31919,13 +31919,13 @@ var EventBus = require("./eventBus");
 			if(method == "get") {
 				url = transformToGetRequest(url, details);
 				$http.get(url) 
-				   	.success(resolveChangePasswordSuccess)
-				    .error(resolveChangePasswordFailure);
+				   	.then(resolveChangePasswordSuccess)
+				    .catch(resolveChangePasswordFailure);
 			}
 			else {
 				$http[method](url, details) 
-				   	.success(resolveChangePasswordSuccess)
-				    .error(resolveChangePasswordFailure);
+				   	.then(resolveChangePasswordSuccess)
+				    .catch(resolveChangePasswordFailure);
 			}
 			return this;
 		}
@@ -31937,13 +31937,13 @@ var EventBus = require("./eventBus");
 			if(method == "get") {
 				url = transformToGetRequest(url, details);
 				$http.get(url) 
-				   	.success(resolveResetPasswordSuccess)
-				    .error(resolveResetPasswordFailure);
+				   	.then(resolveResetPasswordSuccess)
+				    .catch(resolveResetPasswordFailure);
 			}
 			else {
 				$http[method](url, details) 
-			   	.success(resolveResetPasswordSuccess)
-			    .error(resolveResetPasswordFailure);
+			   	.then(resolveResetPasswordSuccess)
+			    .catch(resolveResetPasswordFailure);
 			}
 			return this;
 		}
@@ -31972,8 +31972,8 @@ var EventBus = require("./eventBus");
 			return role;
 		}
 		
-		function resolveAuthSuccess(data) {
-			var session = data;
+		function resolveAuthSuccess(res) {
+			var session = res.data;
 			if(_config.userInfoUrl) {
 				var authHeader = {};
 				authHeader[_config.tokenHeader] = session[_config.tokenAttr];
@@ -31981,10 +31981,10 @@ var EventBus = require("./eventBus");
  					method: _config.userInfoMethod,
  					url: _config.userInfoUrl,
  					headers: authHeader})
-			   	.success(function(data) {
-					resolveSession(angular.merge(session, data));
+			   	.then(function(res) {
+					resolveSession(angular.merge(session, res.data));
 				})
-			    .error(resolveResetPasswordFailure);
+			    .catch(resolveResetPasswordFailure);
 			} else {
 				resolveSession(session);
 			}
@@ -31992,30 +31992,30 @@ var EventBus = require("./eventBus");
 
 		function resolveSession(session) {
 			if(_config.authInfoParser) {
-				session = _config.authInfoParser(data);
+				session = _config.authInfoParser(session);
 			}
 			AuthSession.create(session);
 			eventBus.trigger(triggers.loginSuccess, session);			
 		}
 		
-		function resolveAuthFailure(err) {
-			eventBus.trigger(triggers.loginFailed, err);
+		function resolveAuthFailure(res) {
+			eventBus.trigger(triggers.loginFailed, res.data);
 		}
 		
-		function resolveChangePasswordSuccess(data) {
-			eventBus.trigger(triggers.changePasswordSuccess, data);
+		function resolveChangePasswordSuccess(res) {
+			eventBus.trigger(triggers.changePasswordSuccess, res.data);
 		}
 		
-		function resolveChangePasswordFailure(err) {
-			eventBus.trigger(triggers.changePasswordFailed, err);
+		function resolveChangePasswordFailure(res) {
+			eventBus.trigger(triggers.changePasswordFailed, res.data);
 		}
 		
-		function resolveResetPasswordSuccess(data) {
-			eventBus.trigger(triggers.resetPasswordSuccess, data);		
+		function resolveResetPasswordSuccess(res) {
+			eventBus.trigger(triggers.resetPasswordSuccess, res.data);		
 		}
 		
-		function resolveResetPasswordFailure(err) {
-			eventBus.trigger(triggers.resetPasswordFailed, err);
+		function resolveResetPasswordFailure(res) {
+			eventBus.trigger(triggers.resetPasswordFailed, res.data);
 		}
 	}
 

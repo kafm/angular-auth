@@ -1,6 +1,6 @@
 {
   "name": "angular-authflow",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,7 @@
     "build:js": "uglifyjs ./src/authModule.js -o ./dist/angular-authflow.min.js -c",
     "build": "npm run mv:src & npm run build:js",
     "bundle": "browserify ./demo/app.js > ./demo/bundle.js",
-    "server": "live-server --port=3000 ./demo",
-    "start": "run-p watch server"
+    "server": "live-server --port=3000 ./demo"
   },
   "repository": {
     "type": "git",

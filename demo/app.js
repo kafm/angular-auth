@@ -10,10 +10,10 @@ Configuration.$inject = ["AuthService"];
 
 function Configuration(AuthService) {
 	AuthService.config({
-		requestUrl: "http://127.0.0.1:8080/authenticate"
-		, resetPassRequestUrl: "http://127.0.0.1:8080/reset_password"
-		, changePassRequestUrl:"http://127.0.0.1:8080/change_password"
-		, userInfoUrl: "http://127.0.0.1:8080/userInfo"
+		requestUrl: "http://127.0.0.1:8000/api/v1/authenticate"
+		, resetPassRequestUrl: "http://127.0.0.1:8000/api/v1/reset_password"
+		, changePassRequestUrl:"http://127.0.0.1:8000/api/v1/change_password"
+		, userInfoUrl: "http://127.0.0.1:8000/api/v1/user-info"
 		, roleAttr: "permissions"
 		, tokenAttr: "id_token"
 	});
