@@ -223,7 +223,7 @@ var EventBus = require("./eventBus");
 						return env;					
 					}
 					, responseError: function(rejection) {
-						if (AuthSession.isAuthenticated() && _config.unauthorizedStatuses.indexOf(rejection.status) >= 0)
+						if (_config.unauthorizedStatuses.indexOf(rejection.status) >= 0)
 							AuthSession.destroy();
 						else if(_config.forbiddenStatuses.indexOf(rejection.status) >= 0)
 							eventBus.trigger(triggers.forbidden, rejection);	
