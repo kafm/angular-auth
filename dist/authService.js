@@ -52,7 +52,7 @@ var EventBus = require("./eventBus");
 			triggers: triggers
 			, config: config
 			, authenticate: authenticate
-			, setToken: setToken
+			, authenticateByToken: authenticateByToken
 			, changePassword: changePassword
 			, resetPassword: resetPassword
 			, isAuthenticated: isAuthenticated
@@ -98,8 +98,12 @@ var EventBus = require("./eventBus");
 			return this;
 		}
 
-		function setToken(token) {
-
+		function authenticateByToken(token) {
+			if(token) {
+				var res = { data: {} };
+				res.data[_config.tokenAttr] = token;
+				resolveAuthSuccess(res);
+			}
 		}
 		
 		function changePassword(details) {
@@ -174,7 +178,8 @@ var EventBus = require("./eventBus");
 			   	.then(function(res) {
 					resolveSession(angular.merge(session, res.data));
 				})
-			    .catch(resolveResetPasswordFailure);
+				.catch(resolveAuthFailure);
+			    //.catch(resolveResetPasswordFailure);
 			} else {
 				resolveSession(session);
 			}
@@ -223,10 +228,12 @@ var EventBus = require("./eventBus");
 						return env;					
 					}
 					, responseError: function(rejection) {
-						if (_config.unauthorizedStatuses.indexOf(rejection.status) >= 0)
-							AuthSession.destroy();
-						else if(_config.forbiddenStatuses.indexOf(rejection.status) >= 0)
-							eventBus.trigger(triggers.forbidden, rejection);	
+						if(rejection && rejection.status) {
+							if (_config.unauthorizedStatuses.indexOf(rejection.status) >= 0)
+								AuthSession.destroy();
+							else if(_config.forbiddenStatuses.indexOf(rejection.status) >= 0)
+								eventBus.trigger(triggers.forbidden, rejection);	
+						}
 						return $q.reject(rejection);
 					}
 			};			

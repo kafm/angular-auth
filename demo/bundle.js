@@ -32030,13 +32030,17 @@ var EventBus = require("./eventBus");
 							if(token)
 								env.headers[_config.tokenHeader] = token;
 						}
+						console.log("HERE ok as well");
 						return env;					
 					}
 					, responseError: function(rejection) {
-						if (AuthSession.isAuthenticated() && _config.unauthorizedStatuses.indexOf(rejection.status) >= 0)
-							AuthSession.destroy();
-						else if(_config.forbiddenStatuses.indexOf(rejection.status) >= 0)
-							eventBus.trigger(triggers.forbidden, rejection);	
+						if(rejection && rejection.status) {
+							if (_config.unauthorizedStatuses.indexOf(rejection.status) >= 0)
+								AuthSession.destroy();
+							else if(_config.forbiddenStatuses.indexOf(rejection.status) >= 0)
+								eventBus.trigger(triggers.forbidden, rejection);	
+						}
+						console.log("I'm good...");
 						return $q.reject(rejection);
 					}
 			};			
