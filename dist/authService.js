@@ -225,7 +225,7 @@ var EventBus = require("./eventBus");
 							if(token)
 								env.headers[_config.tokenHeader] = token;
 						}
-						return env;					
+						return env || $q.when(env);					
 					}
 					, responseError: function(rejection) {
 						if(rejection && rejection.status) {
