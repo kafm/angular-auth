@@ -57,10 +57,8 @@ var base64 = require("./base64");
 		function create(session) {
 			_session = session;
 			authenticated = true;
-			if(localStorageSupport) {
-				setCookie(storageKey, 
-						base64.encode(JSON.stringify(session)));
-			}
+			setCookie(storageKey, 
+				base64.encode(JSON.stringify(session)));
 			eventBus.trigger(triggers.create, _session);
 			eventBus.trigger(triggers.change, authenticated);
 		}
@@ -74,9 +72,7 @@ var base64 = require("./base64");
 		}
 		
 		function destroy() {
-			if(localStorageSupport) {
-				localStorage.removeItem(storageKey);
-			}
+			removeCookie(storageKey);
 			setTimeout(function() {
 				_session = undefined;
 				authenticated = false;	
