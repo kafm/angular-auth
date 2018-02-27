@@ -99,11 +99,22 @@ var base64 = require("./base64");
 		}
 
 		function setCookie(cname, value) {
-			document.cookie = cname+"="+value+"; expires="+defaultExpireDate+"; path=/;";
+			console.log(location.hostname)
+			domain = guessDomain();
+			console.log("Domain is: "+domain);
+			document.cookie = cname+"="+value+"; expires="+defaultExpireDate 
+								+"; domain="+domain+"; path=/;";
 		}
 
 		function removeCookie(cname) {
 			document.cookie = cname+"=; expires="+deleteExpireDate+"; path=/;";
+		}
+
+		function guessDomain() {
+			var parts = location.hostname.split('.');
+			var subdomain = parts.shift();
+			var upperleveldomain = parts.join('.');
+			return parts.slice(-2).join('.');
 		}
 	}
 	
