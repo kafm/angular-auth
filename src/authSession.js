@@ -99,12 +99,25 @@ var base64 = require("./base64");
 		}
 
 		function setCookie(cname, value) {
-			document.cookie = cname+"="+value+"; expires="+defaultExpireDate+"; path=/;";
+			document.cookie = cname+"="+value+"; expires="+defaultExpireDate +
+								"; domain="+getDomain()+"; path=/;";
 		}
 
 		function removeCookie(cname) {
-			document.cookie = cname+"=; expires="+deleteExpireDate+"; path=/;";
+			if(!cname) return;
+			var value = getCookie(cname);
+			document.cookie = cname+"="+value+"; expires="+deleteExpireDate +
+								"; domain="+getDomain()+"; path=/;";
 		}
+
+		function getDomain() {
+			var parts = location.hostname.split('.');
+			var subdomain = parts.shift();
+			var upperleveldomain = parts.join('.');
+			var domain = parts.slice(-2).join('.');
+			return domain;
+		}
+
 	}
 	
 	
